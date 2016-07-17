@@ -6,7 +6,7 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-require 'csv'
+# require 'csv'
 
 case Rails.env
   when 'test'
@@ -19,27 +19,59 @@ case Rails.env
   when 'development'
     # Seed data for development environment
 
-    CSV.foreach('db/migrate/seed_data/development/impressions.csv', {headers: true}) do |row|
-      # row is of type CSV::Row.
-      # to_a converts it to an array of elements, where each element is another array [header, value].
-      banner_id, campaign_id = row.to_a.map {|el| el[1]}
-      Impression.create   banner_id: banner_id,
-                          campaign_id: campaign_id
-    end
+    # The Ruby code commented out below is painfully slow for our seed data, because it uses a different transaction
+    # for each row, and we're inserting hundreds of thousands of them!
+    # With sqlite, it's not straight-forward to execute import csv command directly either,
+    # not least because created_at & updated_at columns do not exist in the CSV.
 
-    CSV.foreach('db/migrate/seed_data/development/clicks.csv', {headers: true}) do |row|
-      click_id, banner_id, campaign_id = row.to_a.map {|el| el[1]}
-      Click.create  id: click_id,
-                    banner_id: banner_id,
-                    campaign_id: campaign_id
+    # So we are, regrettably, doing it the dirty way: compile all rows in memory and batch-insert them
+    # in a single transaction, using raw SQL. We can only afford this because we know the seed data is clean.
+    # This takes seconds vs an hour, though.
+    inserts = []
+    tstamp = Time.new.strftime('%Y-%m-%d %H:%M:%S.%6L')
+    File.readlines('db/migrate/seed_data/development/impressions.csv').drop(1).each do |line|
+      inserts.push("(#{line.strip},'#{tstamp}','#{tstamp}')")
     end
+    Impression.connection.execute "INSERT INTO impressions (`banner_id`, `campaign_id`, `created_at`, `updated_at`)
+VALUES #{inserts.join(', ')}"
 
-    CSV.foreach('db/migrate/seed_data/development/conversions.csv', {headers: true}) do |row|
-      conversion_id, click_id, revenue = row.to_a.map {|el| el[1]}
-      Conversion.create   id: conversion_id,
-                          click: Click.find(click_id),
-                          revenue: revenue
+    inserts = []
+    tstamp = Time.new.strftime('%Y-%m-%d %H:%M:%S.%6L')
+    File.readlines('db/migrate/seed_data/development/clicks.csv').drop(1).each do |line|
+      inserts.push("(#{line.strip},'#{tstamp}','#{tstamp}')")
     end
+    Impression.connection.execute "INSERT INTO clicks (`id`, `banner_id`, `campaign_id`, `created_at`, `updated_at`)
+VALUES #{inserts.join(', ')}"
+
+    inserts = []
+    tstamp = Time.new.strftime('%Y-%m-%d %H:%M:%S.%6L')
+    File.readlines('db/migrate/seed_data/development/conversions.csv').drop(1).each do |line|
+      inserts.push("(#{line.strip},'#{tstamp}','#{tstamp}')")
+    end
+    Impression.connection.execute "INSERT INTO conversions (`id`, `click_id`, `revenue`, `created_at`, `updated_at`)
+VALUES #{inserts.join(', ')}"
+
+    # CSV.foreach('db/migrate/seed_data/development/impressions.csv', {headers: true}) do |row|
+    #   # row is of type CSV::Row.
+    #   # to_a converts it to an array of elements, where each element is another array [header, value].
+    #   banner_id, campaign_id = row.to_a.map {|el| el[1]}
+    #   Impression.create   banner_id: banner_id,
+    #                       campaign_id: campaign_id
+    # end
+    #
+    # CSV.foreach('db/migrate/seed_data/development/clicks.csv', {headers: true}) do |row|
+    #   click_id, banner_id, campaign_id = row.to_a.map {|el| el[1]}
+    #   Click.create  id: click_id,
+    #                 banner_id: banner_id,
+    #                 campaign_id: campaign_id
+    # end
+    #
+    # CSV.foreach('db/migrate/seed_data/development/conversions.csv', {headers: true}) do |row|
+    #   conversion_id, click_id, revenue = row.to_a.map {|el| el[1]}
+    #   Conversion.create   id: conversion_id,
+    #                       click: Click.find(click_id),
+    #                       revenue: revenue
+    # end
 
   when 'production'
     # Seed data for production environment
