@@ -34,7 +34,7 @@ case Rails.env
                     campaign_id: campaign_id
     end
 
-    CSV.foreach('db/migrate/data/development/conversions.csv', {headers: true}) do |row|
+    CSV.foreach('db/migrate/seed_data/development/conversions.csv', {headers: true}) do |row|
       conversion_id, click_id, revenue = row.to_a.map {|el| el[1]}
       Conversion.create   id: conversion_id,
                           click: Click.find(click_id),
