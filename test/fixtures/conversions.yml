@@ -1,0 +1,9 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  click: one
+  revenue: 1.5
+
+two:
+  click: two
+  revenue: 1.5
