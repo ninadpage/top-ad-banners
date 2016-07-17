@@ -27,29 +27,40 @@ case Rails.env
     # So we are, regrettably, doing it the dirty way: compile all rows in memory and batch-insert them
     # in a single transaction, using raw SQL. We can only afford this because we know the seed data is clean.
     # This takes seconds vs an hour, though.
-    inserts = []
-    tstamp = Time.new.strftime('%Y-%m-%d %H:%M:%S.%6L')
-    File.readlines('db/migrate/seed_data/development/impressions.csv').drop(1).each do |line|
-      inserts.push("(#{line.strip},'#{tstamp}','#{tstamp}')")
-    end
-    Impression.connection.execute "INSERT INTO impressions (`banner_id`, `campaign_id`, `created_at`, `updated_at`)
-VALUES #{inserts.join(', ')}"
 
-    inserts = []
-    tstamp = Time.new.strftime('%Y-%m-%d %H:%M:%S.%6L')
-    File.readlines('db/migrate/seed_data/development/clicks.csv').drop(1).each do |line|
-      inserts.push("(#{line.strip},'#{tstamp}','#{tstamp}')")
+    # This turned even dirtier because apparently, docker container runs out of stack space when processing
+    # 150K records in memory. Also, attempting 10K records at a time resulted in
+    # `SQLite3::SQLException: too many terms in compound SELECT`.
+    # So had to settle on 400 rows at a time.
+    all_lines = File.readlines('db/migrate/seed_data/development/impressions.csv').drop(1)
+    all_lines.each_slice(400) do |lines|
+      inserts = []
+      tstamp = Time.new.strftime('%Y-%m-%d %H:%M:%S.%6L')
+      lines.each do |line|
+        inserts.push("(#{line.strip},'#{tstamp}','#{tstamp}')")
+      end
+      Impression.connection.execute "INSERT INTO impressions (`banner_id`, `campaign_id`, `created_at`, `updated_at`) VALUES #{inserts.join(', ')}"
     end
-    Impression.connection.execute "INSERT INTO clicks (`id`, `banner_id`, `campaign_id`, `created_at`, `updated_at`)
-VALUES #{inserts.join(', ')}"
 
-    inserts = []
-    tstamp = Time.new.strftime('%Y-%m-%d %H:%M:%S.%6L')
-    File.readlines('db/migrate/seed_data/development/conversions.csv').drop(1).each do |line|
-      inserts.push("(#{line.strip},'#{tstamp}','#{tstamp}')")
+    all_lines = File.readlines('db/migrate/seed_data/development/clicks.csv').drop(1)
+    all_lines.each_slice(400) do |lines|
+      inserts = []
+      tstamp = Time.new.strftime('%Y-%m-%d %H:%M:%S.%6L')
+      lines.each do |line|
+        inserts.push("(#{line.strip},'#{tstamp}','#{tstamp}')")
+      end
+      Impression.connection.execute "INSERT INTO clicks (`id`, `banner_id`, `campaign_id`, `created_at`, `updated_at`) VALUES #{inserts.join(', ')}"
     end
-    Impression.connection.execute "INSERT INTO conversions (`id`, `click_id`, `revenue`, `created_at`, `updated_at`)
-VALUES #{inserts.join(', ')}"
+
+    all_lines = File.readlines('db/migrate/seed_data/development/conversions.csv').drop(1)
+    all_lines.each_slice(400) do |lines|
+      inserts = []
+      tstamp = Time.new.strftime('%Y-%m-%d %H:%M:%S.%6L')
+      lines.each do |line|
+        inserts.push("(#{line.strip},'#{tstamp}','#{tstamp}')")
+      end
+      Impression.connection.execute "INSERT INTO conversions (`id`, `click_id`, `revenue`, `created_at`, `updated_at`) VALUES #{inserts.join(', ')}"
+    end
 
     # CSV.foreach('db/migrate/seed_data/development/impressions.csv', {headers: true}) do |row|
     #   # row is of type CSV::Row.
