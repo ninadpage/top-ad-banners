@@ -2,12 +2,12 @@
 
 one:
   id: 1
-  click: one
+  click_id: 1
   revenue: 1.5
 
 two:
   id: 2
-  click: two
+  click_id: 2
   revenue: 1.5
 
 # id: 11..22, click_id: 11..22
@@ -15,16 +15,22 @@ two:
 <% 1.upto(12) do |i| %>
 conv_<%= 10 + i %>:
   id: <%= 10 + i %>
-  click: c2c_<%= 10 + i %>
+  click_id: <%= 10 + i %>
   revenue: <%= 1 + i * 0.1 %>
 <% end %>
+
+# Additional conversion for a single banner, boosting its total revenue
+conv_23:
+  id: 23
+  click_id: 23
+  revenue: 10
 
 # id: 31..38, click_id: 31..38
 # Add 8 conversions for clicks on a single campaign_id 3
 <% 1.upto(8) do |i| %>
 conv_<%= 30 + i %>:
   id: <%= 30 + i %>
-  click: c2c_<%= 30 + i %>
+  click_id: <%= 30 + i %>
   revenue: <%= 1 + i * 0.1 %>
 <% end %>
 
@@ -33,6 +39,6 @@ conv_<%= 30 + i %>:
 <% 1.upto(3) do |i| %>
 conv_<%= 40 + i %>:
   id: <%= 40 + i %>
-  click: c2c_<%= 40 + i %>
+  click_id: <%= 40 + i %>
   revenue: <%= 1 + i * 0.1 %>
 <% end %>

@@ -21,6 +21,13 @@ c2c_<%= i %>:
   campaign_id: 2
 <% end %>
 
+# Addition click with conversion for a single banner
+# This banner should have the most revenue for this campaign
+c2c_23:
+  id: 23
+  banner_id: 15
+  campaign_id: 2
+
 # id: 31..38, banner_id: 31..38
 # Add 8 clicks for a different banners for single campaign
 # We also have 8 conversions for these clicks
@@ -48,6 +55,15 @@ only_clicks_<%= 43 + i %>:
   campaign_id: 4
 <% end %>
 
+# Add more clicks for a single banner
+# This banner should have most clicks
+<% 1.upto(3) do |i| %>
+only_clicks_<%= 46 + i %>:
+  id: <%= 46 + i %>
+  banner_id: 45
+  campaign_id: 4
+<% end %>
+
 # id: 51..53, banner_id: 51..53
 # Add 3 clicks for a different banners for single campaign
 # These clicks do not have any conversions
@@ -55,5 +71,14 @@ only_clicks_<%= 43 + i %>:
 only_clicks_<%= 50 + i %>:
   id: <%= 50 + i %>
   banner_id: <%= 50 + i %>
+  campaign_id: 5
+<% end %>
+
+# Add more clicks for a single banner
+# This banner should have most clicks
+<% 1.upto(3) do |i| %>
+only_clicks_<%= 53 + i %>:
+  id: <%= 53 + i %>
+  banner_id: 52
   campaign_id: 5
 <% end %>

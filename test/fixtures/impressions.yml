@@ -43,3 +43,11 @@ cmpn5_ban<%= 50 + i %>:
   banner_id: <%= 50 + i %>
   campaign_id: 5
 <% end %>
+
+# Campaign with only two banners
+<% 1.upto(2) do |i| %>
+cmpn6_ban<%= 60 + i %>:
+  id: <%= 60 + i %>
+  banner_id: <%= 60 + i %>
+  campaign_id: 6
+<% end %>
