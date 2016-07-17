@@ -5,5 +5,41 @@ one:
   campaign_id: 1
 
 two:
-  banner_id: 1
+  banner_id: 2
   campaign_id: 1
+
+# Map banner_ids 11..22 to campaign_id 2
+# All 12 have conversions
+<% 1.upto(12) do |i| %>
+cmpn2_ban<%= 10 + i %>:
+  id: <%= 10 + i %>
+  banner_id: <%= 10 + i %>
+  campaign_id: 2
+<% end %>
+
+# Map banner_ids 31..38 to campaign_id 3
+# All 8 have conversions
+<% 1.upto(8) do |i| %>
+cmpn3_ban<%= 30 + i %>:
+  id: <%= 30 + i %>
+  banner_id: <%= 30 + i %>
+  campaign_id: 3
+<% end %>
+
+# Map banner_ids 41..46 to campaign_id 4
+# First 3 have conversion, next 3 have only clicks
+<% 1.upto(6) do |i| %>
+cmpn4_ban<%= 40 + i %>:
+  id: <%= 40 + i %>
+  banner_id: <%= 40 + i %>
+  campaign_id: 4
+<% end %>
+
+# Map banner_ids 51..56 to campaign_id 5
+# Only 3 have clicks
+<% 1.upto(6) do |i| %>
+cmpn5_ban<%= 50 + i %>:
+  id: <%= 50 + i %>
+  banner_id: <%= 50 + i %>
+  campaign_id: 5
+<% end %>

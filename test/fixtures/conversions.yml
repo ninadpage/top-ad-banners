@@ -1,9 +1,38 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
+  id: 1
   click: one
   revenue: 1.5
 
 two:
+  id: 2
   click: two
   revenue: 1.5
+
+# id: 11..22, click_id: 11..22
+# Add 12 conversions for clicks on a single campaign_id 2
+<% 1.upto(12) do |i| %>
+conv_<%= 10 + i %>:
+  id: <%= 10 + i %>
+  click: c2c_<%= 10 + i %>
+  revenue: <%= 1 + i * 0.1 %>
+<% end %>
+
+# id: 31..38, click_id: 31..38
+# Add 8 conversions for clicks on a single campaign_id 3
+<% 1.upto(8) do |i| %>
+conv_<%= 30 + i %>:
+  id: <%= 30 + i %>
+  click: c2c_<%= 30 + i %>
+  revenue: <%= 1 + i * 0.1 %>
+<% end %>
+
+# id: 41..43, banner_id: 41..43
+# Add 3 conversions for clicks on a single campaign_id 4
+<% 1.upto(3) do |i| %>
+conv_<%= 40 + i %>:
+  id: <%= 40 + i %>
+  click: c2c_<%= 40 + i %>
+  revenue: <%= 1 + i * 0.1 %>
+<% end %>

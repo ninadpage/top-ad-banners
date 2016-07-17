@@ -1,9 +1,59 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
+  id: 1
   banner_id: 1
   campaign_id: 1
 
 two:
+  id: 2
   banner_id: 1
   campaign_id: 1
+
+
+# id: 11..22, banner_id: 11..22
+# Add 12 clicks for a different banners for single campaign
+# We also have 12 conversions for these clicks
+<% 1.upto(12) do |i| %>
+c2c_<%= i %>:
+  id: <%= 10 + i %>
+  banner_id: <%= 10 + i %>
+  campaign_id: 2
+<% end %>
+
+# id: 31..38, banner_id: 31..38
+# Add 8 clicks for a different banners for single campaign
+# We also have 8 conversions for these clicks
+<% 1.upto(8) do |i| %>
+c2c_<%= 30 + i %>:
+  id: <%= 30 + i %>
+  banner_id: <%= 30 + i %>
+  campaign_id: 3
+<% end %>
+
+# id: 41..46, banner_id: 41..46
+# Add 6 clicks for a different banners for single campaign
+# Out of these, only 3 have conversions
+<% 1.upto(3) do |i| %>
+c2c_<%= 40 + i %>:
+  id: <%= 40 + i %>
+  banner_id: <%= 40 + i %>
+  campaign_id: 4
+<% end %>
+
+<% 1.upto(3) do |i| %>
+only_clicks_<%= 43 + i %>:
+  id: <%= 43 + i %>
+  banner_id: <%= 43 + i %>
+  campaign_id: 4
+<% end %>
+
+# id: 51..53, banner_id: 51..53
+# Add 3 clicks for a different banners for single campaign
+# These clicks do not have any conversions
+<% 1.upto(3) do |i| %>
+only_clicks_<%= 50 + i %>:
+  id: <%= 50 + i %>
+  banner_id: <%= 50 + i %>
+  campaign_id: 5
+<% end %>
