@@ -74,4 +74,9 @@ class Campaign
 
     result
   end
+
+  # Static method
+  def self.get_all_campaign_ids
+    Impression.select(:campaign_id).distinct.order(:campaign_id).map { |row| row.campaign_id }
+  end
 end
