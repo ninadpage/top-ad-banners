@@ -42,9 +42,10 @@ installed.
 
 ### Notes
  1. This is a Ruby-on-Rails application.
- 2. Right now, it uses sqlite3 database inside the same container as the
-    application, which means the database needs to be created
-    every time the container comes up. If we can introduce additional
+ 2. Right now, it uses a sqlite3 database inside the same container
+    as the application, which means the database needs to be created
+    every time the container comes up. We can introduce additional
     dependency on [Docker Compose](https://docs.docker.com/compose/overview/),
-    we can easily fix this by adding another container running
-    MySQL/Postgres.
+    and easily fix this by adding another container running
+    MySQL/Postgres, and using Docker Volumes to add persistent
+    storage.
