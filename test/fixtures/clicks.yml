@@ -64,6 +64,15 @@ only_clicks_<%= 46 + i %>:
   campaign_id: 4
 <% end %>
 
+# Add more clicks for a single banner which also has conversions, but the banner falls in case when 0 < x <=5
+# This banner should have second most clicks
+<% 1.upto(2) do |i| %>
+only_clicks_<%= 57 + i %>:
+  id: <%= 57 + i %>
+  banner_id: 46
+  campaign_id: 4
+<% end %>
+
 # id: 51..53, banner_id: 51..53
 # Add 3 clicks for a different banners for single campaign
 # These clicks do not have any conversions

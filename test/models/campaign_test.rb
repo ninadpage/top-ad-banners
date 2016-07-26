@@ -70,4 +70,12 @@ class CampaignTest < ActiveSupport::TestCase
     result = campaign.get_top_banners_for_campaign
     assert_empty result
   end
+
+  test 'Should return distinct banner ids' do
+    2.upto(6) do |i|
+      campaign = Campaign.new(i)
+      result = campaign.get_top_banners_for_campaign.map{|r| r[:banner_id]}
+      assert_equal result.size, result.uniq.size, "distinct banners for campaign id #{i}"
+    end
+  end
 end
