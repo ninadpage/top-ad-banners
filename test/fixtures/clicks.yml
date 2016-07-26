@@ -69,7 +69,7 @@ only_clicks_<%= 46 + i %>:
 <% 1.upto(2) do |i| %>
 only_clicks_<%= 57 + i %>:
   id: <%= 57 + i %>
-  banner_id: 46
+  banner_id: 42
   campaign_id: 4
 <% end %>
 

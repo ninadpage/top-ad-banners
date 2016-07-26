@@ -22,7 +22,7 @@ The application is also intelligent enough to avoid saturation.
    visitor and doesn't serve the same banner again until all
    chosen banners are served.
 
-### Prerequisits
+### Prerequisites
 You need to have [Docker Engine](https://docs.docker.com/engine/)
 installed.
 

@@ -13,10 +13,10 @@ class Campaign
   # ordered by total revenue for that banner-campaign combination (it's possible to have multiple click-to-conversions
   # for same banner & campaign)
   # rtype: Array of Click with attributes: banner_id, total_revenue
-  def top_x_banners_with_conversions(x)
-    Click.joins(:conversions)
+  def top_x_banners_with_conversions(x, not_in = [])
+    Click.for_campaign(@campaign_id).joins(:conversions)
         .select('clicks.banner_id, SUM(conversions.revenue) as total_revenue')
-        .where(:clicks => {:campaign_id => @campaign_id})
+        .where.not(banner_id: not_in)
         .group('clicks.banner_id')
         .order('total_revenue DESC')
         .limit(x)
@@ -25,9 +25,10 @@ class Campaign
 
   # Returns top x banners with most clicks associated with this campaign
   # rtype: Array of Click with attributes: banner_id, click_count
-  def top_x_banners_with_most_clicks(x)
-    Click.select('clicks.banner_id, COUNT(*) as click_count')
-        .where({:campaign_id => @campaign_id})
+  def top_x_banners_with_most_clicks(x, not_in = [])
+    Click.for_campaign(@campaign_id)
+        .select('clicks.banner_id, COUNT(*) as click_count')
+        .where.not(banner_id: not_in)
         .group(:banner_id)
         .order('click_count DESC')
         .limit(x)
@@ -36,8 +37,8 @@ class Campaign
 
   # Returns random x banners associated with this campaign
   # rtype: Array of Impression with attributes: banner_id
-  def random_x_banners_for_campaign(x)
-    Impression.for_campaign(@campaign_id).select(:banner_id).to_a.sample(x)
+  def random_x_banners_for_campaign(x, not_in = [])
+    Impression.for_campaign(@campaign_id).select(:banner_id).where.not(banner_id: not_in).to_a.sample(x)
   end
 
   # Returns a collection of banners associated with given campaign_id.
@@ -65,18 +66,21 @@ class Campaign
     end
     return result if result.size > MIN_BANNERS
 
-    self.top_x_banners_with_most_clicks(MIN_BANNERS - result.size).each do |b|
+    not_in = result.pluck(:banner_id)
+    self.top_x_banners_with_most_clicks(MIN_BANNERS - result.size, not_in).each do |b|
       result << {:banner_id => b.banner_id, :click_count => b.click_count}
     end
     return result if result.size > MIN_BANNERS
 
-    self.random_x_banners_for_campaign(MIN_BANNERS - result.size).each { |b| result << {:banner_id => b.banner_id} }
+    not_in = result.pluck(:banner_id)
+    self.random_x_banners_for_campaign(MIN_BANNERS - result.size, not_in)
+        .each { |b| result << {:banner_id => b.banner_id} }
 
     result
   end
 
   # Static method
   def self.get_all_campaign_ids
-    Impression.select(:campaign_id).distinct.order(:campaign_id).map { |row| row.campaign_id }
+    Impression.distinct.order(:campaign_id).pluck(:campaign_id)
   end
 end
